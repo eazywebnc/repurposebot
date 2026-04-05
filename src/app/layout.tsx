@@ -29,12 +29,14 @@ export const metadata: Metadata = {
     url: "https://repurposebot.eazyweb.nc",
     siteName: "RepurposeBot",
     type: "website",
+    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "RepurposeBot",
     description:
       "Transform your blog articles into social media posts with AI.",
+    images: ['/opengraph-image'],
   },
 };
 
