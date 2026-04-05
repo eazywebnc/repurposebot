@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowRight,
   Sparkles,
@@ -10,234 +12,189 @@ import {
   AtSign,
   Briefcase,
   Camera,
-  Globe,
-  Hash,
-  Heart,
-  MessageCircle,
-  Repeat2,
-  Share,
-  CheckCircle2,
-  Wand2,
+  Mail,
+  Clapperboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+gsap.registerPlugin(ScrollTrigger);
+
 /* ------------------------------------------------------------------ */
-/*  Content Transformation Mockup                                      */
+/*  Pipeline data                                                      */
 /* ------------------------------------------------------------------ */
 
-const socialOutputs = [
+const outputPlatforms = [
   {
-    platform: "Twitter",
+    id: "tweet",
+    label: "Tweet Thread",
     icon: AtSign,
-    color: "text-sky-400",
-    bg: "bg-sky-500/10",
-    border: "border-sky-500/15",
-    content:
-      "🚀 We just discovered that 73% of content marketers waste 6+ hours/week on repurposing.\n\nWhat if AI could do it in 30 seconds?\n\nHere's what we learned about the future of content...\n\n🧵 Thread 👇",
-    metrics: { likes: "2.4K", retweets: "847", replies: "132" },
+    color: "from-sky-400 to-sky-600",
+    borderColor: "border-sky-500/30",
+    bgColor: "bg-sky-500/10",
+    textColor: "text-sky-300",
+    snippet: "We just discovered that 73% of content marketers waste 6+ hrs/week...\n\nHere's the thread",
+    angle: -30,
   },
   {
-    platform: "LinkedIn",
+    id: "linkedin",
+    label: "LinkedIn Post",
     icon: Briefcase,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/15",
-    content:
-      "I've been studying how top marketers scale their content output.\n\nThe secret? They don't create more. They repurpose smarter.\n\nHere are 5 frameworks that helped us 10x our reach →",
-    metrics: { likes: "1.8K", comments: "234", shares: "89" },
+    color: "from-blue-400 to-blue-600",
+    borderColor: "border-blue-500/30",
+    bgColor: "bg-blue-500/10",
+    textColor: "text-blue-300",
+    snippet: "I've been studying how top marketers scale their content output.\n\nThe secret? Repurpose smarter.",
+    angle: -15,
   },
   {
-    platform: "Instagram",
+    id: "instagram",
+    label: "Instagram Caption",
     icon: Camera,
-    color: "text-pink-400",
-    bg: "bg-pink-500/10",
-    border: "border-pink-500/15",
-    content:
-      "📊 Content repurposing = the ultimate growth hack.\n\nOne blog post → 7 social posts → 10x reach.\n\nSwipe to see the exact workflow →",
-    metrics: { likes: "5.2K", comments: "312" },
+    color: "from-pink-400 to-fuchsia-600",
+    borderColor: "border-pink-500/30",
+    bgColor: "bg-pink-500/10",
+    textColor: "text-pink-300",
+    snippet: "Content repurposing = the ultimate growth hack.\n\nOne blog post \u2192 7 social posts \u2192 10x reach.",
+    angle: 0,
+  },
+  {
+    id: "email",
+    label: "Email Newsletter",
+    icon: Mail,
+    color: "from-violet-400 to-purple-600",
+    borderColor: "border-violet-500/30",
+    bgColor: "bg-violet-500/10",
+    textColor: "text-violet-300",
+    snippet: "Subject: The repurposing framework that 10x'd our reach\n\nHey [Name], this week we...",
+    angle: 15,
+  },
+  {
+    id: "tiktok",
+    label: "TikTok Script",
+    icon: Clapperboard,
+    color: "from-fuchsia-400 to-rose-600",
+    borderColor: "border-fuchsia-500/30",
+    bgColor: "bg-fuchsia-500/10",
+    textColor: "text-fuchsia-300",
+    snippet: "[HOOK] Stop spending hours rewriting your content.\n\n[BODY] Here's a 30-second trick...",
+    angle: 30,
   },
 ];
 
-function TransformationMockup() {
+/* ------------------------------------------------------------------ */
+/*  AI Particle ring (center zone)                                     */
+/* ------------------------------------------------------------------ */
+
+function AiParticles() {
   return (
-    <div className="relative w-full rounded-2xl border border-white/[0.08] bg-[#0a0812]/80 overflow-hidden shadow-2xl shadow-violet-500/10 backdrop-blur-xl">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/60" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-            <div className="w-3 h-3 rounded-full bg-green-500/60" />
-          </div>
-          <span className="text-[11px] text-zinc-500 ml-2">RepurposeBot — Content Studio</span>
-        </div>
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/15">
-          <Wand2 className="w-3 h-3 text-violet-400" />
-          <span className="text-[10px] text-violet-400 font-medium">AI Transforming...</span>
+    <div className="relative w-28 h-28 md:w-36 md:h-36 flex-shrink-0">
+      {/* Outer rotating ring */}
+      <div className="absolute inset-0 animate-[spin_8s_linear_infinite]">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-violet-400/60"
+            style={{
+              top: `${50 + 46 * Math.sin((i * 2 * Math.PI) / 12)}%`,
+              left: `${50 + 46 * Math.cos((i * 2 * Math.PI) / 12)}%`,
+              transform: "translate(-50%, -50%)",
+              animationDelay: `${i * 0.15}s`,
+            }}
+          />
+        ))}
+      </div>
+      {/* Inner pulsing ring */}
+      <div className="absolute inset-3 animate-[spin_6s_linear_infinite_reverse]">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1.5 h-1.5 rounded-full bg-fuchsia-400/50"
+            style={{
+              top: `${50 + 44 * Math.sin((i * 2 * Math.PI) / 8)}%`,
+              left: `${50 + 44 * Math.cos((i * 2 * Math.PI) / 8)}%`,
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        ))}
+      </div>
+      {/* Center glow */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-violet-600/30 to-fuchsia-600/30 border border-violet-500/30 flex items-center justify-center animate-pulse shadow-[0_0_40px_rgba(139,92,246,0.3)]">
+          <Sparkles className="w-7 h-7 md:w-9 md:h-9 text-violet-300" />
         </div>
       </div>
+      {/* Ambient glow behind */}
+      <div className="absolute -inset-6 rounded-full bg-violet-500/10 blur-2xl pointer-events-none" />
+    </div>
+  );
+}
 
-      <div className="grid grid-cols-12 gap-0">
-        {/* Left — Source article */}
-        <div className="col-span-4 p-4 border-r border-white/[0.06]">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="flex items-center gap-1.5 mb-3">
-              <FileText className="w-3 h-3 text-violet-400" />
-              <span className="text-[10px] font-medium text-violet-300">Source Article</span>
-            </div>
+/* ------------------------------------------------------------------ */
+/*  Source article card                                                 */
+/* ------------------------------------------------------------------ */
 
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]"
-            >
-              <h4 className="text-[11px] font-semibold text-white mb-2">
-                The Future of Content Marketing: AI-Powered Repurposing
-              </h4>
-              <div className="space-y-1.5">
-                {[1, 2, 3, 4].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-1.5 rounded-full bg-white/[0.04]"
-                    style={{ width: `${85 - i * 12}%` }}
-                  />
-                ))}
-              </div>
-              <div className="mt-2 flex items-center gap-2 text-[9px] text-zinc-600">
-                <span>1,847 words</span>
-                <span>·</span>
-                <span>7 min read</span>
-              </div>
-            </motion.div>
-
-            {/* Transformation arrow */}
-            <motion.div
-              initial={{ opacity: 0, scaleY: 0 }}
-              animate={{ opacity: 1, scaleY: 1 }}
-              transition={{ delay: 0.8, duration: 0.4 }}
-              className="flex flex-col items-center my-3 origin-top"
-            >
-              <div className="w-px h-6 bg-gradient-to-b from-violet-500/40 to-fuchsia-500/40" />
-              <motion.div
-                animate={{ y: [0, 3, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/20 flex items-center justify-center"
-              >
-                <Sparkles className="w-3 h-3 text-violet-400" />
-              </motion.div>
-              <div className="w-px h-6 bg-gradient-to-b from-fuchsia-500/40 to-violet-500/40" />
-            </motion.div>
-
-            {/* Platforms output */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0 }}
-              className="space-y-1.5"
-            >
-              <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1.5 font-medium">Generated for</p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  { icon: AtSign, label: "Twitter", color: "text-sky-400", bg: "bg-sky-500/10" },
-                  { icon: Briefcase, label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10" },
-                  { icon: Camera, label: "Instagram", color: "text-pink-400", bg: "bg-pink-500/10" },
-                  { icon: Globe, label: "Facebook", color: "text-blue-400", bg: "bg-blue-500/10" },
-                  { icon: Hash, label: "TikTok", color: "text-zinc-300", bg: "bg-zinc-500/10" },
-                ].map((p, i) => (
-                  <motion.div
-                    key={p.label}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.1 + i * 0.08 }}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg ${p.bg} border border-white/[0.04]`}
-                  >
-                    <p.icon className={`w-3 h-3 ${p.color}`} />
-                    <span className="text-[9px] text-zinc-300">{p.label}</span>
-                    <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400 ml-auto" />
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
+function SourceCard() {
+  return (
+    <div className="pipeline-source relative w-full max-w-xs flex-shrink-0 rounded-2xl border border-white/[0.08] bg-[#0c0918]/80 p-5 shadow-xl shadow-violet-500/5 backdrop-blur-xl">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-7 h-7 rounded-lg bg-violet-500/15 border border-violet-500/20 flex items-center justify-center">
+          <FileText className="w-4 h-4 text-violet-400" />
         </div>
+        <span className="text-xs font-medium text-violet-300">Blog Post</span>
+      </div>
+      <h4 className="text-sm font-semibold text-white mb-2 leading-snug">
+        The Future of Content Marketing: AI-Powered Repurposing
+      </h4>
+      <div className="space-y-1.5 mb-3">
+        <div className="h-1.5 w-full rounded-full bg-white/[0.06]" />
+        <div className="h-1.5 w-[90%] rounded-full bg-white/[0.05]" />
+        <div className="h-1.5 w-[75%] rounded-full bg-white/[0.04]" />
+        <div className="h-1.5 w-[85%] rounded-full bg-white/[0.04]" />
+        <div className="h-1.5 w-[60%] rounded-full bg-white/[0.03]" />
+      </div>
+      <div className="flex items-center gap-2 text-[10px] text-zinc-500">
+        <span>1,847 words</span>
+        <span>&middot;</span>
+        <span>7 min read</span>
+      </div>
+      {/* Glow */}
+      <div className="absolute -inset-3 rounded-3xl bg-violet-500/5 blur-xl pointer-events-none -z-10" />
+    </div>
+  );
+}
 
-        {/* Right — Generated posts */}
-        <div className="col-span-8 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-medium text-zinc-300">Generated Posts</span>
-            <span className="text-[9px] text-zinc-600">5 posts · 12 seconds</span>
-          </div>
+/* ------------------------------------------------------------------ */
+/*  Output platform card                                               */
+/* ------------------------------------------------------------------ */
 
-          <div className="space-y-2.5">
-            {socialOutputs.map((post, i) => (
-              <motion.div
-                key={post.platform}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 + i * 0.2, type: "spring", stiffness: 150 }}
-                className={`p-3 rounded-xl bg-white/[0.02] border ${post.border} hover:bg-white/[0.04] transition-colors`}
-              >
-                {/* Platform header */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-5 h-5 rounded-md ${post.bg} flex items-center justify-center`}>
-                    <post.icon className={`w-3 h-3 ${post.color}`} />
-                  </div>
-                  <span className={`text-[10px] font-medium ${post.color}`}>{post.platform}</span>
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 + i * 0.2 }}
-                    className="ml-auto px-1.5 py-0.5 rounded text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/15"
-                  >
-                    Ready to post
-                  </motion.span>
-                </div>
-
-                {/* Post content */}
-                <p className="text-[10px] text-zinc-300 leading-relaxed whitespace-pre-line mb-2">
-                  {post.content}
-                </p>
-
-                {/* Metrics preview */}
-                <div className="flex items-center gap-3 text-[9px] text-zinc-500">
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-2.5 h-2.5" />
-                    {post.metrics.likes}
-                  </span>
-                  {"retweets" in post.metrics && (
-                    <span className="flex items-center gap-1">
-                      <Repeat2 className="w-2.5 h-2.5" />
-                      {post.metrics.retweets}
-                    </span>
-                  )}
-                  {"comments" in post.metrics && (
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="w-2.5 h-2.5" />
-                      {post.metrics.comments}
-                    </span>
-                  )}
-                  {"replies" in post.metrics && (
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="w-2.5 h-2.5" />
-                      {post.metrics.replies}
-                    </span>
-                  )}
-                  {"shares" in post.metrics && (
-                    <span className="flex items-center gap-1">
-                      <Share className="w-2.5 h-2.5" />
-                      {post.metrics.shares}
-                    </span>
-                  )}
-                  <span className="ml-auto text-[8px] text-zinc-600 italic">predicted reach</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+function OutputCard({
+  platform,
+  index,
+}: {
+  platform: (typeof outputPlatforms)[number];
+  index: number;
+}) {
+  const Icon = platform.icon;
+  return (
+    <div
+      className={`pipeline-output pipeline-output-${index} w-full max-w-[220px] flex-shrink-0 rounded-xl border ${platform.borderColor} bg-[#0c0918]/80 p-3.5 shadow-lg backdrop-blur-xl`}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <div
+          className={`w-6 h-6 rounded-md ${platform.bgColor} flex items-center justify-center`}
+        >
+          <Icon className={`w-3.5 h-3.5 ${platform.textColor}`} />
+        </div>
+        <span className={`text-[11px] font-semibold ${platform.textColor}`}>
+          {platform.label}
+        </span>
+      </div>
+      <p className="text-[10px] text-zinc-400 leading-relaxed whitespace-pre-line line-clamp-3">
+        {platform.snippet}
+      </p>
+      <div className="mt-2 flex items-center gap-1">
+        <div className="px-1.5 py-0.5 rounded text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">
+          Ready
         </div>
       </div>
     </div>
@@ -245,38 +202,22 @@ function TransformationMockup() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Floating badges                                                    */
+/*  Arrow connector                                                    */
 /* ------------------------------------------------------------------ */
 
-function FloatingBadges() {
+function PipelineArrow({ className = "" }: { className?: string }) {
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 2.0, type: "spring" }}
-        className="absolute -right-3 top-16 z-20 hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl bg-violet-500/10 border border-violet-500/20 backdrop-blur-lg"
-      >
-        <Sparkles className="w-4 h-4 text-violet-400" />
-        <div>
-          <p className="text-[10px] font-medium text-violet-300">5 Posts Generated</p>
-          <p className="text-[9px] text-zinc-500">in 12 seconds</p>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 2.3, type: "spring" }}
-        className="absolute -left-3 bottom-28 z-20 hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 backdrop-blur-lg"
-      >
-        <Heart className="w-4 h-4 text-fuchsia-400" />
-        <div>
-          <p className="text-[10px] font-medium text-fuchsia-300">10x More Reach</p>
-          <p className="text-[9px] text-zinc-500">Same content effort</p>
-        </div>
-      </motion.div>
-    </>
+    <div className={`pipeline-arrow flex items-center ${className}`}>
+      {/* Horizontal on desktop, vertical on mobile */}
+      <div className="hidden md:block w-12 lg:w-20 h-px bg-gradient-to-r from-violet-500/50 to-fuchsia-500/50 relative">
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-l-[6px] border-l-fuchsia-500/60 border-y-[4px] border-y-transparent" />
+        {/* Glow dot traveling */}
+        <div className="pipeline-dot absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+      </div>
+      <div className="md:hidden h-10 w-px bg-gradient-to-b from-violet-500/50 to-fuchsia-500/50 relative mx-auto">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-t-[6px] border-t-fuchsia-500/60 border-x-[4px] border-x-transparent" />
+      </div>
+    </div>
   );
 }
 
@@ -286,24 +227,106 @@ function FloatingBadges() {
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const mockupY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const pipelineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* -- Initial hidden state for pipeline elements -- */
+      gsap.set(".pipeline-source", { opacity: 0, x: -60 });
+      gsap.set(".pipeline-arrow", { opacity: 0, scaleX: 0 });
+      gsap.set(".pipeline-dot", { left: "0%" });
+      gsap.set(".pipeline-ai-zone", { opacity: 0, scale: 0.6 });
+      gsap.set(".pipeline-output", { opacity: 0, x: 40, y: 20 });
+
+      /* -- ScrollTrigger master timeline -- */
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: pipelineRef.current,
+          start: "top 85%",
+          end: "bottom 30%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Stage 1: Article slides in
+      tl.to(".pipeline-source", {
+        opacity: 1,
+        x: 0,
+        duration: 0.6,
+        ease: "power3.out",
+      });
+
+      // Stage 2: First arrow appears
+      tl.to(
+        ".pipeline-arrow-1",
+        { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      );
+
+      // Dot travels along first arrow
+      tl.to(
+        ".pipeline-arrow-1 .pipeline-dot",
+        { left: "100%", duration: 0.5, ease: "power1.inOut" },
+        "-=0.1"
+      );
+
+      // Stage 3: AI zone pulses in
+      tl.to(
+        ".pipeline-ai-zone",
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+        },
+        "-=0.2"
+      );
+
+      // Stage 4: Second arrow
+      tl.to(
+        ".pipeline-arrow-2",
+        { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out" },
+        "-=0.1"
+      );
+
+      tl.to(
+        ".pipeline-arrow-2 .pipeline-dot",
+        { left: "100%", duration: 0.5, ease: "power1.inOut" },
+        "-=0.1"
+      );
+
+      // Stage 5: Output cards fan out one by one
+      outputPlatforms.forEach((_, i) => {
+        tl.to(
+          `.pipeline-output-${i}`,
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.4,
+            ease: "back.out(1.4)",
+          },
+          i === 0 ? "-=0.1" : "-=0.25"
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-16"
+      className="relative flex flex-col items-center justify-center overflow-hidden px-4 pt-24 pb-20 min-h-screen"
     >
-      {/* Background */}
+      {/* ---- Background ---- */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[120px]" />
-        <div className="absolute bottom-0 left-1/4 h-[400px] w-[400px] rounded-full bg-purple-600/8 blur-[100px]" />
-        <div className="absolute right-1/4 top-1/3 h-[300px] w-[300px] rounded-full bg-fuchsia-600/8 blur-[80px]" />
+        <div className="absolute bottom-0 left-1/4 h-[400px] w-[400px] rounded-full bg-purple-600/[0.08] blur-[100px]" />
+        <div className="absolute right-1/4 top-1/3 h-[300px] w-[300px] rounded-full bg-fuchsia-600/[0.08] blur-[80px]" />
       </div>
 
+      {/* Grid overlay */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
         style={{
@@ -314,30 +337,88 @@ export function Hero() {
       />
 
       <div className="relative z-10 mx-auto max-w-7xl w-full">
-        {/* Text */}
-        <div className="text-center mb-12">
+        {/* ================================================================ */}
+        {/*  CONTENT TRANSFORMATION PIPELINE                                 */}
+        {/* ================================================================ */}
+        <div
+          ref={pipelineRef}
+          className="mb-16 md:mb-20"
+        >
+          {/* Desktop: horizontal pipeline */}
+          <div className="hidden md:flex items-center justify-center gap-0">
+            {/* Source article */}
+            <SourceCard />
+
+            {/* Arrow 1 */}
+            <PipelineArrow className="pipeline-arrow-1" />
+
+            {/* AI Processing zone */}
+            <div className="pipeline-ai-zone">
+              <AiParticles />
+            </div>
+
+            {/* Arrow 2 */}
+            <PipelineArrow className="pipeline-arrow-2" />
+
+            {/* Output cards fanning out */}
+            <div className="flex flex-col gap-2.5 items-start">
+              {outputPlatforms.map((platform, i) => (
+                <OutputCard key={platform.id} platform={platform} index={i} />
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile: vertical pipeline */}
+          <div className="flex md:hidden flex-col items-center gap-0">
+            {/* Source article */}
+            <SourceCard />
+
+            {/* Arrow 1 */}
+            <PipelineArrow className="pipeline-arrow-1" />
+
+            {/* AI Processing zone */}
+            <div className="pipeline-ai-zone">
+              <AiParticles />
+            </div>
+
+            {/* Arrow 2 */}
+            <PipelineArrow className="pipeline-arrow-2" />
+
+            {/* Output cards stacked */}
+            <div className="flex flex-col gap-3 items-center w-full">
+              {outputPlatforms.map((platform, i) => (
+                <OutputCard key={platform.id} platform={platform} index={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ================================================================ */}
+        {/*  HEADLINE, SUBTEXT & CTAs (below the pipeline)                   */}
+        {/* ================================================================ */}
+        <div className="text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm text-violet-300"
+            className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm text-violet-300"
           >
             <Sparkles className="h-4 w-4" />
-            AI-Powered Content Repurposing
+            AI-Powered Content Pipeline
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-7xl"
           >
-            One Article.{" "}
+            One Blog Post.{" "}
             <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-              Five Social Posts.
+              Five Platforms.
             </span>
             <br />
-            Zero Effort.
+            Instant Content.
           </motion.h1>
 
           <motion.p
@@ -346,9 +427,9 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mx-auto mb-10 max-w-2xl text-lg text-gray-400 sm:text-xl"
           >
-            Transform your blog content into perfectly crafted social media posts
-            for Twitter, LinkedIn, Facebook, Instagram, and more. Powered by AI,
-            built for marketers.
+            Paste your article and watch AI transform it into perfectly tailored
+            posts for Twitter, LinkedIn, Instagram, email newsletters, and TikTok
+            scripts -- all in seconds.
           </motion.p>
 
           <motion.div
@@ -359,7 +440,7 @@ export function Hero() {
           >
             <Link href="/auth/login">
               <Button size="xl" className="group">
-                Get Started Free
+                Start Repurposing Free
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -370,7 +451,7 @@ export function Hero() {
             </a>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats row */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -378,8 +459,8 @@ export function Hero() {
             className="mt-14 grid grid-cols-3 gap-8 border-t border-white/10 pt-10 max-w-lg mx-auto"
           >
             {[
-              { value: "7+", label: "Platforms Supported" },
-              { value: "10x", label: "Faster Than Manual" },
+              { value: "5+", label: "Output Formats" },
+              { value: "30s", label: "Average Transform" },
               { value: "Free", label: "To Get Started" },
             ].map((stat) => (
               <div key={stat.label}>
@@ -389,19 +470,6 @@ export function Hero() {
             ))}
           </motion.div>
         </div>
-
-        {/* Transformation Mockup */}
-        <motion.div
-          style={{ y: mockupY }}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, type: "spring", stiffness: 80 }}
-          className="relative max-w-5xl mx-auto"
-        >
-          <FloatingBadges />
-          <TransformationMockup />
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-16 bg-violet-500/15 blur-[60px] rounded-full" />
-        </motion.div>
       </div>
     </section>
   );
