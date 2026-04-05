@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     "blog to social",
     "marketing automation",
   ],
+  alternates: {
+    canonical: 'https://repurposebot.eazyweb.nc',
+  },
   metadataBase: new URL("https://repurposebot.eazyweb.nc"),
   openGraph: {
     title: "RepurposeBot - One Article. Five Social Posts. Zero Effort.",
