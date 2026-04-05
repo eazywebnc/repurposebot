@@ -40,9 +40,49 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "RepurposeBot",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    description:
+      "Transform your blog articles into perfectly crafted social media posts. AI-powered content repurposing for Twitter, LinkedIn, Facebook, and more.",
+    url: "https://repurposebot.eazyweb.nc",
+    offers: [
+      { "@type": "Offer", price: "0", priceCurrency: "USD", name: "Free" },
+      { "@type": "Offer", price: "19", priceCurrency: "USD", name: "Pro" },
+      {
+        "@type": "Offer",
+        price: "49",
+        priceCurrency: "USD",
+        name: "Business",
+      },
+    ],
+    creator: {
+      "@type": "Organization",
+      name: "EazyWebNC",
+      url: "https://eazyweb.nc",
+    },
+  };
+
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body className={`${inter.variable} antialiased`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-orange-600 focus:text-white focus:rounded"
+        >
+          Skip to content
+        </a>
+        <div id="main-content">{children}</div>
+      </body>
     </html>
   );
 }
