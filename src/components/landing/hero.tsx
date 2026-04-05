@@ -46,7 +46,7 @@ export function Hero() {
           <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
             Five Social Posts.
           </span>
-          <br />
+          {' '}<br />
           Zero Effort.
         </motion.h1>
 

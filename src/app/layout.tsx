@@ -29,7 +29,8 @@ export const metadata: Metadata = {
     url: "https://repurposebot.eazyweb.nc",
     siteName: "RepurposeBot",
     type: "website",
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    locale: "en_US",
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'RepurposeBot — One Article. Five Social Posts. Zero Effort.' }],
   },
   twitter: {
     card: "summary_large_image",
