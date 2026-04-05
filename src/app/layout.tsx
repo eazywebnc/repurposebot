@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     siteName: "RepurposeBot",
     type: "website",
     locale: "en_US",
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'RepurposeBot — One Article. Five Social Posts. Zero Effort.' }],
+    images: [{ url: '/images/og-image.webp', width: 1200, height: 630, type: 'image/webp', alt: 'RepurposeBot — One Article. Five Social Posts. Zero Effort.' }],
   },
   twitter: {
     card: "summary_large_image",
     title: "RepurposeBot",
     description:
       "Transform your blog articles into social media posts with AI.",
-    images: ['/og-image.png'],
+    images: ['/images/og-image.webp'],
   },
 };
 
