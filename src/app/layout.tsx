@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Sora, Inter } from "next/font/google";
 import "./globals.css";
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -80,7 +86,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${sora.variable} ${inter.variable} antialiased`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-orange-600 focus:text-white focus:rounded"

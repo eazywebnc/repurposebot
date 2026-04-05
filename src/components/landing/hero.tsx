@@ -319,7 +319,23 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex flex-col items-center justify-center overflow-hidden px-4 pt-24 pb-20 min-h-screen"
     >
-      {/* ---- Background ---- */}
+      {/* ---- Gradient Mesh Background ---- */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: [
+            "radial-gradient(ellipse 80% 60% at 10% 20%, rgba(139,92,246,0.12) 0%, transparent 60%)",
+            "radial-gradient(ellipse 60% 80% at 85% 15%, rgba(217,70,239,0.10) 0%, transparent 55%)",
+            "radial-gradient(ellipse 70% 50% at 50% 80%, rgba(99,102,241,0.10) 0%, transparent 50%)",
+            "radial-gradient(ellipse 50% 70% at 25% 60%, rgba(192,38,211,0.08) 0%, transparent 55%)",
+            "radial-gradient(ellipse 40% 40% at 75% 55%, rgba(139,92,246,0.09) 0%, transparent 50%)",
+            "radial-gradient(ellipse 90% 40% at 50% 10%, rgba(168,85,247,0.14) 0%, transparent 50%)",
+            "radial-gradient(ellipse 30% 50% at 90% 80%, rgba(236,72,153,0.07) 0%, transparent 50%)",
+          ].join(", "),
+        }}
+      />
+
+      {/* Soft blurred orbs for depth */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[120px]" />
         <div className="absolute bottom-0 left-1/4 h-[400px] w-[400px] rounded-full bg-purple-600/[0.08] blur-[100px]" />
@@ -335,6 +351,43 @@ export function Hero() {
           backgroundSize: "60px 60px",
         }}
       />
+
+      {/* Floating particles */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {[
+          { top: "12%", left: "8%", size: 3, delay: 0, duration: 6 },
+          { top: "25%", left: "92%", size: 2, delay: 1.2, duration: 7 },
+          { top: "68%", left: "15%", size: 2.5, delay: 0.5, duration: 8 },
+          { top: "45%", left: "78%", size: 2, delay: 2.5, duration: 5 },
+          { top: "80%", left: "55%", size: 3, delay: 1.8, duration: 9 },
+          { top: "35%", left: "40%", size: 1.5, delay: 3, duration: 6.5 },
+          { top: "58%", left: "88%", size: 2, delay: 0.8, duration: 7.5 },
+          { top: "15%", left: "60%", size: 2.5, delay: 2, duration: 8 },
+          { top: "90%", left: "25%", size: 2, delay: 1.5, duration: 6 },
+          { top: "5%", left: "45%", size: 1.5, delay: 3.5, duration: 7 },
+          { top: "72%", left: "70%", size: 3, delay: 0.3, duration: 9 },
+          { top: "50%", left: "5%", size: 2, delay: 2.8, duration: 5.5 },
+        ].map((p, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-violet-400/40"
+            style={{
+              top: p.top,
+              left: p.left,
+              width: p.size,
+              height: p.size,
+              animation: `heroFloat ${p.duration}s ease-in-out ${p.delay}s infinite alternate`,
+            }}
+          />
+        ))}
+        <style jsx>{`
+          @keyframes heroFloat {
+            0% { transform: translateY(0px) scale(1); opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-20px) scale(1.3); opacity: 0.2; }
+          }
+        `}</style>
+      </div>
 
       <div className="relative z-10 mx-auto max-w-7xl w-full">
         {/* ================================================================ */}
