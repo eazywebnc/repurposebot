@@ -7,10 +7,10 @@ import {
   ArrowRight,
   Sparkles,
   FileText,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Facebook,
+  AtSign,
+  Briefcase,
+  Camera,
+  Globe,
   Hash,
   Heart,
   MessageCircle,
@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 const socialOutputs = [
   {
     platform: "Twitter",
-    icon: Twitter,
+    icon: AtSign,
     color: "text-sky-400",
     bg: "bg-sky-500/10",
     border: "border-sky-500/15",
@@ -38,7 +38,7 @@ const socialOutputs = [
   },
   {
     platform: "LinkedIn",
-    icon: Linkedin,
+    icon: Briefcase,
     color: "text-blue-400",
     bg: "bg-blue-500/10",
     border: "border-blue-500/15",
@@ -48,7 +48,7 @@ const socialOutputs = [
   },
   {
     platform: "Instagram",
-    icon: Instagram,
+    icon: Camera,
     color: "text-pink-400",
     bg: "bg-pink-500/10",
     border: "border-pink-500/15",
@@ -143,10 +143,10 @@ function TransformationMockup() {
               <p className="text-[9px] text-zinc-500 uppercase tracking-wider mb-1.5 font-medium">Generated for</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { icon: Twitter, label: "Twitter", color: "text-sky-400", bg: "bg-sky-500/10" },
-                  { icon: Linkedin, label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10" },
-                  { icon: Instagram, label: "Instagram", color: "text-pink-400", bg: "bg-pink-500/10" },
-                  { icon: Facebook, label: "Facebook", color: "text-blue-400", bg: "bg-blue-500/10" },
+                  { icon: AtSign, label: "Twitter", color: "text-sky-400", bg: "bg-sky-500/10" },
+                  { icon: Briefcase, label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10" },
+                  { icon: Camera, label: "Instagram", color: "text-pink-400", bg: "bg-pink-500/10" },
+                  { icon: Globe, label: "Facebook", color: "text-blue-400", bg: "bg-blue-500/10" },
                   { icon: Hash, label: "TikTok", color: "text-zinc-300", bg: "bg-zinc-500/10" },
                 ].map((p, i) => (
                   <motion.div
