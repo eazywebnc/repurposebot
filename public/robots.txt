@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://repurposebot.eazyweb.nc/sitemap.xml
