@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PLANS, type PlanId } from "@/lib/stripe";
+import { PLANS, type PlanId } from "@/lib/plans";
 
 const planOrder: PlanId[] = ["free", "pro", "business"];
 
