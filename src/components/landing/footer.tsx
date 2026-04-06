@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Zap } from "lucide-react";
+import { EcosystemFooter } from "./ecosystem-footer";
 
 const footerLinks = {
   Product: [
@@ -58,6 +59,8 @@ export function Footer() {
             </div>
           ))}
         </div>
+
+        <EcosystemFooter />
 
         <div className="mt-12 flex flex-col items-center gap-4 border-t border-white/5 pt-8 sm:flex-row sm:justify-between">
           <p className="text-sm text-gray-600">

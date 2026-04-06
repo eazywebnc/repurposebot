@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     "blog to social",
     "marketing automation",
   ],
+  robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   alternates: {
     canonical: 'https://repurposebot.eazyweb.nc',
   },
@@ -54,28 +55,63 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "RepurposeBot",
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Web",
-    description:
-      "Transform your blog articles into perfectly crafted social media posts. AI-powered content repurposing for Twitter, LinkedIn, Facebook, and more.",
-    url: "https://repurposebot.eazyweb.nc",
-    offers: [
-      { "@type": "Offer", price: "0", priceCurrency: "USD", name: "Free" },
-      { "@type": "Offer", price: "19", priceCurrency: "USD", name: "Pro" },
+    "@graph": [
       {
-        "@type": "Offer",
-        price: "49",
-        priceCurrency: "USD",
-        name: "Business",
+        "@type": "WebSite",
+        name: "RepurposeBot",
+        url: "https://repurposebot.eazyweb.nc",
+        publisher: {
+          "@type": "Organization",
+          name: "EazyWebNC",
+          url: "https://eazyweb.nc",
+          logo: { "@type": "ImageObject", url: "https://eazyweb.nc/logo.png" },
+        },
+      },
+      {
+        "@type": "SoftwareApplication",
+        name: "RepurposeBot",
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web",
+        description:
+          "Transform your blog articles into perfectly crafted social media posts. AI-powered content repurposing for Twitter, LinkedIn, Facebook, and more.",
+        url: "https://repurposebot.eazyweb.nc",
+        offers: [
+          { "@type": "Offer", price: "0", priceCurrency: "USD", name: "Free" },
+          { "@type": "Offer", price: "19", priceCurrency: "USD", name: "Pro" },
+          { "@type": "Offer", price: "49", priceCurrency: "USD", name: "Business" },
+        ],
+        creator: { "@type": "Organization", name: "EazyWebNC", url: "https://eazyweb.nc" },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What is RepurposeBot?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "RepurposeBot is an AI-powered tool that transforms your blog articles into social media posts for Twitter, LinkedIn, Facebook, Instagram, and more — in seconds.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Which social platforms does RepurposeBot support?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "RepurposeBot generates content for Twitter/X, LinkedIn, Facebook, Instagram, and more. Each post is optimized for the specific platform's format and audience.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How does AI content repurposing work?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Paste your blog article and RepurposeBot's AI reads, summarizes, and rewrites it into platform-specific posts. Each version is tailored for tone, length, and hashtags.",
+            },
+          },
+        ],
       },
     ],
-    creator: {
-      "@type": "Organization",
-      name: "EazyWebNC",
-      url: "https://eazyweb.nc",
-    },
   };
 
   return (
